@@ -1,0 +1,8 @@
+*.bak
+Kronos.config
+KronosDocumentation.docx
+KronosTester.py
+Kronos_Code.code-workspace
+Timelapses/
+Todos/
+Unused/
