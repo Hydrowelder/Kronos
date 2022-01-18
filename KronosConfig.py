@@ -1,11 +1,13 @@
 from datetime import datetime
 import configparser
+import time
 
 def General_Config(config):
     Morning = 6  # 6 AM
     Night   = 21 # 9 PM
     current_time_dt = datetime.now()
-
+    current_time_ep = time.time()
+    
     def_freq = 5 # min/pic
     # def_freq = def_freq*60/5 # pic/hour
 
@@ -21,6 +23,11 @@ def General_Config(config):
 
     start_time = input('\nTime to begin timelapse (month/day/year hour:min, default no delay):\nExample: 02/29/2022 13:05\n') or current_time_dt.strftime("%m/%d/%Y, %H:%M")
     
+    start_time_dt = datetime.strptime(start_time,"%m/%d/%Y, %H:%M")
+    start_time_ep = round(start_time_dt.timestamp())
+    if start_time_ep < current_time_ep:
+        print('WARNING: START TIME IN THE PAST!')
+        
     # image_type = input('\nImage file extension (default .jpg):\n') or '.jpg'
     # if not '.' in image_type:
     #     image_type = '.'+image_type

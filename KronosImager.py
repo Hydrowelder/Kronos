@@ -59,8 +59,12 @@ def Setup(Morning, Night, image_freq, start_time, timelapse_length, picture_fold
     current_time_ep = round(time.time())
     current_time_dt = datetime.fromtimestamp(current_time_ep)
     
+    if start_time_ep < current_time_ep:
+        print('WARNING: START TIME IN THE PAST!')
+        
     print('      Will take: '+str(N)+' photos (max)')
     print('Current time is: '+current_time_dt)
+    print('    Starting at: '+start_time_dt.strftime("%m/%d/%Y, %H:%M:%S"))
     print('  Completion at: '+stop_time_dt.strftime("%m/%d/%Y, %H:%M:%S"))
     time_remaining = stop_time_dt-current_time_dt
     print(' Time remaining: '+str(time_remaining))
