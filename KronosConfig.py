@@ -19,7 +19,8 @@ def General_Config(config):
 
     picture_folder = input('\nFolder to put images in (can be created here, default is current date):\n') or current_time_dt.strftime("%m_%d_%Y") # folder in working directory to take images from
 
-    start_time = input('\n Time to begin timelapse (default no delay):\n')
+    start_time = input('\nTime to begin timelapse (month/day/year hour:min, default no delay):\nExample: 02/29/2022 13:05\n') or current_time_dt.strftime("%m/%d/%Y, %H:%M")
+    
     # image_type = input('\nImage file extension (default .jpg):\n') or '.jpg'
     # if not '.' in image_type:
     #     image_type = '.'+image_type
@@ -30,6 +31,7 @@ def General_Config(config):
     config['General']['Morning'] = str(Morning)
     config['General']['Night'] = str(Night)
     config['General']['image_freq'] = str(image_freq)
+    config['General']['start_time'] = start_time
     config['General']['timelapse_length'] = str(timelapse_length)
     config['General']['picture_folder'] = picture_folder
     config['General']['image_type'] = image_type

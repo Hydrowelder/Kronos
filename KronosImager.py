@@ -1,5 +1,6 @@
 # from calendar import month
 from datetime import datetime
+from multiprocessing.connection import wait
 import time
 import os
 import math
@@ -13,6 +14,7 @@ def LoadConfig(config_name):
     Morning          = eval(config['General']['Morning'])
     Night            = eval(config['General']['Night'])
     image_freq       = eval(config['General']['image_freq'])
+    start_time       =      config['General']['start_time']
     timelapse_length = eval(config['General']['timelapse_length'])
     picture_folder   =      config['General']['picture_folder']
     image_type       =      config['General']['image_type']
@@ -23,9 +25,9 @@ def LoadConfig(config_name):
     camera.iso           = eval(config['Camera']['iso'])
     camera.rotation      = eval(config['Camera']['rotation'])
     
-    return Morning, Night, image_freq, timelapse_length, picture_folder, image_type, camera
+    return Morning, Night, image_freq, start_time, timelapse_length, picture_folder, image_type, camera
 
-def Setup(Morning, Night, image_freq, timelapse_length, picture_folder):
+def Setup(Morning, Night, image_freq, start_time, timelapse_length, picture_folder):
     # SETUP
     image_freq = image_freq*60 #s/pic
     timelapse_length = timelapse_length*24*60*60 # s
@@ -42,12 +44,13 @@ def Setup(Morning, Night, image_freq, timelapse_length, picture_folder):
         print('Timelapse folder name has already been created. Continuing anyway.')
         pass
 
-    now_dt = datetime.now()
-    now_ep = round(now_dt.timestamp())
+    # now_dt = datetime.now()
+    # now_ep = round(now_dt.timestamp())
     
-    start_time_ep = now_ep
-    start_time_dt = datetime.fromtimestamp(start_time_ep)
-    stop_time_ep = round(now_ep+timelapse_length)
+    start_time_dt = datetime.strptime(start_time,"%m/%d/%Y, %H:%M")
+    start_time_ep = round(start_time_dt.timestamp())
+    
+    stop_time_ep = round(start_time_ep+timelapse_length)
     stop_time_dt = datetime.fromtimestamp(stop_time_ep)
 
     start_time_dt = start_time_dt.strftime("%m/%d/%Y, %H:%M:%S")
@@ -55,16 +58,16 @@ def Setup(Morning, Night, image_freq, timelapse_length, picture_folder):
 
     current_time_ep = round(time.time())
     current_time_dt = datetime.fromtimestamp(current_time_ep)
-        
+    
     print('      Will take: '+str(N)+' photos (max)')
-    print('Current time is: '+start_time_dt)
+    print('Current time is: '+current_time_dt)
     print('  Completion at: '+stop_time_dt.strftime("%m/%d/%Y, %H:%M:%S"))
     time_remaining = stop_time_dt-current_time_dt
     print(' Time remaining: '+str(time_remaining))
     
-    return image_freq, N, main_directory, stop_time_ep, stop_time_dt
+    return image_freq, N, main_directory, start_time_ep, stop_time_ep, stop_time_dt
 
-def Kronos(Morning, Night, image_freq, image_type, camera, N, main_directory, stop_time_ep, stop_time_dt):
+def Kronos(Morning, Night, image_freq, image_type, camera, N, main_directory, start_time_ep, stop_time_ep, stop_time_dt):
     try:
         current_time_ep = round(time.time())
         last_picture_ep = current_time_ep
@@ -77,6 +80,10 @@ def Kronos(Morning, Night, image_freq, image_type, camera, N, main_directory, st
         L = ['Waiting to take first picture']
         Progress.writelines(L)
         Progress.close()
+        
+        while current_time_ep < start_time_ep:
+            current_time_ep = round(time.time())
+                    
         while current_time_ep < stop_time_ep:
             current_time_ep = round(time.time())
             current_time_dt = datetime.fromtimestamp(current_time_ep)
@@ -134,7 +141,7 @@ def Kronos(Morning, Night, image_freq, image_type, camera, N, main_directory, st
 
 if __name__ == "__main__":
     config_name = 'Kronos.config'
-    Morning, Night, image_freq, timelapse_length, picture_folder, image_type, camera = LoadConfig(config_name)
-    image_freq, N, main_directory, stop_time_ep, stop_time_dt = Setup(Morning, Night, image_freq, timelapse_length, picture_folder)
-    Kronos(Morning, Night, image_freq, image_type, camera, N, main_directory, stop_time_ep, stop_time_dt)
+    Morning, Night, image_freq, start_time, timelapse_length, picture_folder, image_type, camera = LoadConfig(config_name)
+    image_freq, N, main_directory, start_time_ep, stop_time_ep, stop_time_dt = Setup(Morning, Night, image_freq, start_time, timelapse_length, picture_folder)
+    Kronos(Morning, Night, image_freq, image_type, camera, N, main_directory, start_time_ep, stop_time_ep, stop_time_dt)
     
