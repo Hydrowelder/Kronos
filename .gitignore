@@ -1,4 +1,5 @@
 *.bak
+*.jpg
 Kronos.config
 KronosDocumentation.docx
 KronosTester.py
