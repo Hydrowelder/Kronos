@@ -5,27 +5,28 @@ import time
 def General_Config(config):
     Morning = 6  # 6 AM
     Night   = 21 # 9 PM
-    current_time_dt = datetime.now()
+
     current_time_ep = time.time()
-    
+    current_time_dt = datetime.now()
+        
     def_freq = 5 # min/pic
     # def_freq = def_freq*60/5 # pic/hour
 
     def_len = 1 # days
     # def_len = def_len*24*60*60 # s
 
-    image_freq = float(eval(input('Image frequency (in min/pic, default '+str(def_freq)+' min/pic):\n')) or def_freq) # image frequency in pics/hour
+    image_freq = float(input('Image frequency (in min/pic, default '+str(def_freq)+' min/pic):\n') or def_freq) # image frequency in pics/hour
     # image_freq = 1/image_freq # min/pic
 
-    timelapse_length = float(eval(input('\nTimelapse length (in days, default '+ str(def_len)+' day(s)):\n')) or def_len) # timelapse length in days
+    timelapse_length = float(input('\nTimelapse length (in days, default '+ str(def_len)+' day(s)):\n') or def_len) # timelapse length in days
 
     picture_folder = input('\nFolder to put images in (can be created here, default is current date):\n') or current_time_dt.strftime("%m_%d_%Y") # folder in working directory to take images from
 
-    start_time = input('\nTime to begin timelapse (month/day/year hour:min, default no delay):\nExample: 02/29/2022 13:05\n') or current_time_dt.strftime("%m/%d/%Y, %H:%M")
-    
+    start_time = input('\nTime to begin timelapse (month/day/year hour:min, default no delay):\nExample: 02/29/2022, 13:05\n') or current_time_dt.strftime("%m/%d/%Y, %H:%M")
+
     start_time_dt = datetime.strptime(start_time,"%m/%d/%Y, %H:%M")
     start_time_ep = round(start_time_dt.timestamp())
-    if start_time_ep < current_time_ep:
+    if start_time_ep < current_time_ep and start_time != current_time_dt.strftime("%m/%d/%Y, %H:%M"):
         print('WARNING: START TIME IN THE PAST!')
         
     # image_type = input('\nImage file extension (default .jpg):\n') or '.jpg'
